@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.messionproject.mapper.messionMapper">
+    <!--    注意：namespace的地址一定要跟Java文件夹下绑定的呃mapper一致-->
+</mapper>
