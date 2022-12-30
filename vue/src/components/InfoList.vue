@@ -68,7 +68,7 @@ import Hours from './buttonComponents/WindowWorkingHours.vue'
 import Start from './buttonComponents/WindowWorkingStart.vue'
 import Modification from './buttonComponents/WindowTaskModification.vue'
 import WindowEvaluate from './buttonComponents/WindowEvaluate.vue'
-
+import {totalPage,List} from '@/components/js/getList'
 export default {
   components: {
     Control,
@@ -132,7 +132,7 @@ export default {
         this.tableData = [],
           this.loading = true,
           this.$set(this.currentPage, 0, 1)
-        this.getTotalPage()
+        this.getDataWitchPage()
         this.pageshow = false
         this.$nextTick(() => {//重新渲染分页
           this.pageshow = true;
@@ -141,7 +141,7 @@ export default {
     )
   },
   mounted() {
-    this.getTotalPage()
+    this.getDataWitchPage()
   },
  
   methods: {
@@ -160,151 +160,183 @@ export default {
 
       }
     },
-    async getTotalPage() {
+    /**
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     * 
+     */
+    async getDataWitchPage(){
       this.totalrow = 0
-      try {
-        if (this.statusid == 2) {
-          await axios({
-            url: "/check/getcreatermessionpage",
-            method: 'POST',
-            params: {
-              getpage: JSON.stringify({
-                proid: this.proid,
-                userid: this.userid,
-                teg: '%',
-                need: '%',
-                moudle: '%',
-              })
-            }
-          })
-            .then(res => {
-
-              // this.totalPage = parseInt((res.data.number - 1) / 10) + 1
-              this.totalrow = res.data.number
-            })
-        }
-        else if (this.statusid == 1) {
-          await axios({
-            url: "/check/getassignermessionpage",
-            method: 'POST',
-            params: {
-              getpage: JSON.stringify({
-                proid: this.proid,
-                userid: this.userid,
-                teg: '%',
-                need: '%',
-                moudle: '%',
-              })
-            }
-          })
-            .then(res => {
-              // this.totalPage = parseInt((res.data.number - 1) / 10) + 1
-
-              this.totalrow = res.data.number
-            })
-        }
-        else if (this.statusid == 3) {
-          await axios({
-            url: "/check/getcreatermessionpage",
-            method: 'POST',
-            params: {
-              getpage: JSON.stringify({
-                proid: this.proid,
-                userid: this.userid,
-                teg: '2',
-                need: '%',
-                moudle: '%',
-              })
-            }
-          })
-            .then(res => {
-              // this.totalPage = parseInt((res.data.number - 1) / 10) + 1
-              this.totalrow = res.data.number
-
-            })
-        } else if (this.statusid == 4) {
-          await axios({
-            url: "/check/getassignermessionpage",
-            method: 'POST',
-            params: {
-              getpage: JSON.stringify({
-                proid: this.proid,
-                userid: this.userid,
-                teg: '3',
-                need: '%',
-                moudle: '%',
-              })
-            }
-          })
-            .then(res => {
-              // this.totalPage = parseInt((res.data.number - 1) / 10) + 1
-              this.totalrow = res.data.number
-            })
-        } else if (this.statusid == 5) {
-          await axios({
-            url: "/check/getcreatermessionpage",
-            method: 'POST',
-            params: {
-              getpage: JSON.stringify({
-                proid: this.proid,
-                userid: this.userid,
-                teg: '4',
-                need: '%',
-                moudle: '%',
-              })
-            }
-          })
-            .then(res => {
-              // this.totalPage = parseInt((res.data.number - 1) / 10) + 1
-              this.totalrow = res.data.number
-
-            })
-        }
-        else if (this.statusid == 6) {
-          await axios({
-            url: "/check/getcreatermessionpage",
-            method: 'POST',
-            params: {
-              getpage: JSON.stringify({
-                proid: this.proid,
-                userid: this.userid,
-                teg: '%',
-                need: '%',
-                moudle: '%',
-              })
-            }
-          })
-            .then(res => {
-              // this.totalPage = parseInt((res.data.number - 1) / 10) + 1
-              this.totalrow += parseInt(res.data.number)
-            })
-          await axios({
-            url: "/check/getassignermessionpage",
-            method: 'POST',
-            params: {
-              getpage: JSON.stringify({
-                proid: this.proid,
-                userid: this.userid,
-                teg: '%',
-                need: '%',
-                moudle: '%',
-              })
-            }
-          })
-            .then(res => {
-              // this.totalPage = parseInt((res.data.number - 1) / 10) + 1
-              this.totalrow += parseInt(res.data.number)
-            })
-          // this.totalPage = parseInt((total1 + total2 - 1) / 10) + 1
-        }
-      } catch (err) {
-        console.log(err)
-      }
+      this.totalrow = totalPage(this.userid,this.statusid,this.proid)
       for (var i = 0; i < this.totalrow; i++) {
         this.tableData.push({})
       }
-      this.getList()
+      this.getData()
     },
+    async getData(pagenum=1){
+      var result=List(this.userid,this.statusid,this.proid,pagenum)
+      for (var i = 0; i < result.length; i++) {
+                this.tableData[pagenum * 10 - 10 + i] = result[i]
+              }
+      this.key++
+      this.loading = false
+    },
+    /*重构*/
+    // async getTotalPage() {
+    //   this.totalrow = 0
+    //   try {
+    //     if (this.statusid == 2) {
+    //       await axios({
+    //         url: "/check/getcreatermessionpage",
+    //         method: 'POST',
+    //         params: {
+    //           getpage: JSON.stringify({
+    //             proid: this.proid,
+    //             userid: this.userid,
+    //             teg: '%',
+    //             need: '%',
+    //             moudle: '%',
+    //           })
+    //         }
+    //       })
+    //         .then(res => {
+
+    //           // this.totalPage = parseInt((res.data.number - 1) / 10) + 1
+    //           this.totalrow = res.data.number
+    //         })
+    //     }
+    //     else if (this.statusid == 1) {
+    //       await axios({
+    //         url: "/check/getassignermessionpage",
+    //         method: 'POST',
+    //         params: {
+    //           getpage: JSON.stringify({
+    //             proid: this.proid,
+    //             userid: this.userid,
+    //             teg: '%',
+    //             need: '%',
+    //             moudle: '%',
+    //           })
+    //         }
+    //       })
+    //         .then(res => {
+    //           // this.totalPage = parseInt((res.data.number - 1) / 10) + 1
+
+    //           this.totalrow = res.data.number
+    //         })
+    //     }
+    //     else if (this.statusid == 3) {
+    //       await axios({
+    //         url: "/check/getcreatermessionpage",
+    //         method: 'POST',
+    //         params: {
+    //           getpage: JSON.stringify({
+    //             proid: this.proid,
+    //             userid: this.userid,
+    //             teg: '2',
+    //             need: '%',
+    //             moudle: '%',
+    //           })
+    //         }
+    //       })
+    //         .then(res => {
+    //           // this.totalPage = parseInt((res.data.number - 1) / 10) + 1
+    //           this.totalrow = res.data.number
+
+    //         })
+    //     } else if (this.statusid == 4) {
+    //       await axios({
+    //         url: "/check/getassignermessionpage",
+    //         method: 'POST',
+    //         params: {
+    //           getpage: JSON.stringify({
+    //             proid: this.proid,
+    //             userid: this.userid,
+    //             teg: '3',
+    //             need: '%',
+    //             moudle: '%',
+    //           })
+    //         }
+    //       })
+    //         .then(res => {
+    //           // this.totalPage = parseInt((res.data.number - 1) / 10) + 1
+    //           this.totalrow = res.data.number
+    //         })
+    //     } else if (this.statusid == 5) {
+    //       await axios({
+    //         url: "/check/getcreatermessionpage",
+    //         method: 'POST',
+    //         params: {
+    //           getpage: JSON.stringify({
+    //             proid: this.proid,
+    //             userid: this.userid,
+    //             teg: '4',
+    //             need: '%',
+    //             moudle: '%',
+    //           })
+    //         }
+    //       })
+    //         .then(res => {
+    //           // this.totalPage = parseInt((res.data.number - 1) / 10) + 1
+    //           this.totalrow = res.data.number
+
+    //         })
+    //     }
+    //     else if (this.statusid == 6) {
+    //       await axios({
+    //         url: "/check/getcreatermessionpage",
+    //         method: 'POST',
+    //         params: {
+    //           getpage: JSON.stringify({
+    //             proid: this.proid,
+    //             userid: this.userid,
+    //             teg: '%',
+    //             need: '%',
+    //             moudle: '%',
+    //           })
+    //         }
+    //       })
+    //         .then(res => {
+    //           // this.totalPage = parseInt((res.data.number - 1) / 10) + 1
+    //           this.totalrow += parseInt(res.data.number)
+    //         })
+    //       await axios({
+    //         url: "/check/getassignermessionpage",
+    //         method: 'POST',
+    //         params: {
+    //           getpage: JSON.stringify({
+    //             proid: this.proid,
+    //             userid: this.userid,
+    //             teg: '%',
+    //             need: '%',
+    //             moudle: '%',
+    //           })
+    //         }
+    //       })
+    //         .then(res => {
+    //           // this.totalPage = parseInt((res.data.number - 1) / 10) + 1
+    //           this.totalrow += parseInt(res.data.number)
+    //         })
+    //       // this.totalPage = parseInt((total1 + total2 - 1) / 10) + 1
+    //     }
+    //   } catch (err) {
+    //     console.log(err)
+    //   }
+    //   for (var i = 0; i < this.totalrow; i++) {
+    //     this.tableData.push({})
+    //   }
+    //   this.getList()
+    // },
+
+
+
+
+    
     handleClick(row) {
       // console.log(row);
     },
@@ -320,174 +352,176 @@ export default {
      * 
      * 
      */
-    async getList(pagenum = 1) {
-      if (this.totalrow == 0) {
-        this.loading = false
-        return
-      }
-      try {
-        if (this.statusid == 2) {
-          await axios({
-            url: "/check/getcreatermession",
-            method: 'POST',
-            params: {
-              getmession: JSON.stringify({
-                proid: this.proid,
-                userid: this.userid,
-                teg: '%',
-                need: '%',
-                moudle: '%',
-                loc: pagenum.toString()
-              })
-            }
-          })
-            .then(res => {
-              for (var i = 0; i < res.data.result.length; i++) {
-                this.tableData[pagenum * 10 - 10 + i] = res.data.result[i]
-              }
-              this.key++
-              this.loading = false
-            })
-        }
-        else if (this.statusid == 1) {
-          await axios({
-            url: "/check/getassignermession",
-            method: 'POST',
-            params: {
-              getmession: JSON.stringify({
-                proid: this.proid,
-                userid: this.userid,
-                teg: '%',
-                need: '%',
-                moudle: '%',
-                loc: pagenum.toString()
+    /*重构*/
+    // async getList(pagenum = 1) {
+    //   if (this.totalrow == 0) {
+    //     this.loading = false
+    //     return
+    //   }
+    //   try {
+    //     if (this.statusid == 2) {
+    //       await axios({
+    //         url: "/check/getcreatermession",
+    //         method: 'POST',
+    //         params: {
+    //           getmession: JSON.stringify({
+    //             proid: this.proid,
+    //             userid: this.userid,
+    //             teg: '%',
+    //             need: '%',
+    //             moudle: '%',
+    //             loc: pagenum.toString()
+    //           })
+    //         }
+    //       })
+    //         .then(res => {
+    //           for (var i = 0; i < res.data.result.length; i++) {
+    //             this.tableData[pagenum * 10 - 10 + i] = res.data.result[i]
+    //           }
+    //           this.key++
+    //           this.loading = false
+    //         })
+    //     }
+    //     else if (this.statusid == 1) {
+    //       await axios({
+    //         url: "/check/getassignermession",
+    //         method: 'POST',
+    //         params: {
+    //           getmession: JSON.stringify({
+    //             proid: this.proid,
+    //             userid: this.userid,
+    //             teg: '%',
+    //             need: '%',
+    //             moudle: '%',
+    //             loc: pagenum.toString()
 
 
-              })
-            }
-          })
-            .then(res => {
+    //           })
+    //         }
+    //       })
+    //         .then(res => {
 
-              for (var i = 0; i < res.data.result.length; i++) {
-                this.tableData[pagenum * 10 - 10 + i] = res.data.result[i]
-              }
-              this.key++
-              this.loading = false
-            })
-        }
-        else if (this.statusid == 3) {
-          await axios({
-            url: "/check/getcreatermession",
-            method: 'POST',
-            params: {
-              getmession: JSON.stringify({
-                proid: this.proid,
-                userid: this.userid,
-                teg: '2',
-                need: '%',
-                moudle: '%',
-                loc: pagenum.toString()
-
-
-              })
-            }
-          })
-            .then(res => {
-              for (var i = 0; i < res.data.result.length; i++) {
-                this.tableData[pagenum * 10 - 10 + i] = res.data.result[i]
-              }
-              this.key++
-              this.loading = false
-            })
-        } else if (this.statusid == 4) {
-          await axios({
-            url: "/check/getassignermession",
-            method: 'POST',
-            params: {
-              getmession: JSON.stringify({
-                proid: this.proid,
-                userid: this.userid,
-                teg: '3',
-                need: '%',
-                moudle: '%',
-                loc: pagenum.toString()
+    //           for (var i = 0; i < res.data.result.length; i++) {
+    //             this.tableData[pagenum * 10 - 10 + i] = res.data.result[i]
+    //           }
+    //           this.key++
+    //           this.loading = false
+    //         })
+    //     }
+    //     else if (this.statusid == 3) {
+    //       await axios({
+    //         url: "/check/getcreatermession",
+    //         method: 'POST',
+    //         params: {
+    //           getmession: JSON.stringify({
+    //             proid: this.proid,
+    //             userid: this.userid,
+    //             teg: '2',
+    //             need: '%',
+    //             moudle: '%',
+    //             loc: pagenum.toString()
 
 
-              })
-            }
-          })
-            .then(res => {
-              for (var i = 0; i < res.data.result.length; i++) {
-                this.tableData[pagenum * 10 - 10 + i] = res.data.result[i]
-              }
-              this.key++
-              this.loading = false
-            })
-        }
-        // 我取消的
-        else if (this.statusid == 5) {
-          await axios({
-            url: "/check/getcreatermession",
-            method: 'POST',
-            params: {
-              getmession: JSON.stringify({
-                proid: this.proid,
-                userid: this.userid,
-                teg: '4',
-                need: '%',
-                moudle: '%',
-                loc: pagenum.toString()
+    //           })
+    //         }
+    //       })
+    //         .then(res => {
+    //           for (var i = 0; i < res.data.result.length; i++) {
+    //             this.tableData[pagenum * 10 - 10 + i] = res.data.result[i]
+    //           }
+    //           this.key++
+    //           this.loading = false
+    //         })
+    //     } else if (this.statusid == 4) {
+    //       await axios({
+    //         url: "/check/getassignermession",
+    //         method: 'POST',
+    //         params: {
+    //           getmession: JSON.stringify({
+    //             proid: this.proid,
+    //             userid: this.userid,
+    //             teg: '3',
+    //             need: '%',
+    //             moudle: '%',
+    //             loc: pagenum.toString()
 
-              })
-            }
-          })
-            .then(res => {
-              for (var i = 0; i < res.data.result.length; i++) {
-                this.tableData[pagenum * 10 - 10 + i] = res.data.result[i]
-              }
-              this.key++
-              this.loading = false
-            })
-        }
-        // 全部
-        else if (this.statusid == 6) {
-          console.log(this.proid)
-          await axios({
-            url: "/check/getallmession",
-            method: 'POST',
-            params: {
-              getmession: JSON.stringify({
-                proid: this.proid,
-                userid: this.userid,
-                teg: '%',
-                need: '%',
-                moudle: '%',
-                loc: pagenum.toString()
-              })
-            }
-          })
-            .then(res => {
-              console.log(res)
-              for (var i = 0; i < res.data.result.length; i++) {
-                this.tableData[pagenum * 10 - 10 + i] = res.data.result[i]
-              }
-              this.key++
-              this.loading = false
-            })
-        }
-      } catch (error) {
-        console.log('error:')
-        console.log(error);
 
-      }
-    }, handleSizeChange(val) {
+    //           })
+    //         }
+    //       })
+    //         .then(res => {
+    //           for (var i = 0; i < res.data.result.length; i++) {
+    //             this.tableData[pagenum * 10 - 10 + i] = res.data.result[i]
+    //           }
+    //           this.key++
+    //           this.loading = false
+    //         })
+    //     }
+    //     // 我取消的
+    //     else if (this.statusid == 5) {
+    //       await axios({
+    //         url: "/check/getcreatermession",
+    //         method: 'POST',
+    //         params: {
+    //           getmession: JSON.stringify({
+    //             proid: this.proid,
+    //             userid: this.userid,
+    //             teg: '4',
+    //             need: '%',
+    //             moudle: '%',
+    //             loc: pagenum.toString()
+
+    //           })
+    //         }
+    //       })
+    //         .then(res => {
+    //           for (var i = 0; i < res.data.result.length; i++) {
+    //             this.tableData[pagenum * 10 - 10 + i] = res.data.result[i]
+    //           }
+    //           this.key++
+    //           this.loading = false
+    //         })
+    //     }
+    //     // 全部
+    //     else if (this.statusid == 6) {
+    //       console.log(this.proid)
+    //       await axios({
+    //         url: "/check/getallmession",
+    //         method: 'POST',
+    //         params: {
+    //           getmession: JSON.stringify({
+    //             proid: this.proid,
+    //             userid: this.userid,
+    //             teg: '%',
+    //             need: '%',
+    //             moudle: '%',
+    //             loc: pagenum.toString()
+    //           })
+    //         }
+    //       })
+    //         .then(res => {
+    //           console.log(res)
+    //           for (var i = 0; i < res.data.result.length; i++) {
+    //             this.tableData[pagenum * 10 - 10 + i] = res.data.result[i]
+    //           }
+    //           this.key++
+    //           this.loading = false
+    //         })
+    //     }
+    //   } catch (error) {
+    //     console.log('error:')
+    //     console.log(error);
+
+    //   }
+    // }, 
+    handleSizeChange(val) {
       this.pagesize = val;
       console.log(`每页 ${val} 条`);
     },
     handleCurrentChange(val) {
       this.$set(this.currentPage, 0, val)
       if (JSON.stringify(this.tableData[this.currentPage[0] * 10 - 10]) == "{}") {
-        this.getList(val)
+        this.getData(val)
       }
     },
     handleNextClick(val) {
@@ -501,7 +535,7 @@ export default {
     handlereflash(){
       this.loading=true
       console.log(this.currentPage[0])
-      this.getList(this.currentPage[0])
+      this.getData(this.currentPage[0])
     }
   }
 }
