@@ -10,33 +10,33 @@
         <div id="evaluate">
           <!-- 主窗口设计 -->
           <el-table :data="EvaluateData" height=420 v-loading.fullscreen.lock="loading">
-            <el-table-column prop="name" label="完成者" width="80"></el-table-column>
+            <el-table-column prop="assigner" label="完成者" width="80"></el-table-column>
             <el-table-column prop="esti_time,actu_time" label="起止时间" width="300" header-align="center" align="center">
               <template slot-scope="scope">
-                <span style="color: green;">预计时间: {{ scope.row.esti_time1 }} ~ {{ scope.row.esti_time2 }}</span>
+                <span style="color: green;">预计时间: {{ scope.row.starttime0 }} ~ {{ scope.row.endtime0 }}</span>
                 <br>
-                <span style="color: red;">实际时间:{{ scope.row.actu_time1 }} ~ {{ scope.row.actu_time2 }}</span>
+                <span style="color: red;">实际时间:{{ scope.row.costtime1 }} ~ {{ scope.row.endtime1 }}</span>
               </template>
             </el-table-column>
             <!-- 预计estimate + 工时time = estimate_time -->
             <!-- 实际actual + 工时time = actual_time -->
             <!-- 修改modify + 工时time = modify_time -->
-            <el-table-column prop="estimate_work_time" label="预计工时" width="80" align="center"></el-table-column>
-            <el-table-column prop="actual_work_time" label="实际工时" width="80" align="center"></el-table-column>
-            <el-table-column prop="modify_work_time" label="调整工时" width="120" header-align="center">
+            <el-table-column prop="costtime0" label="预计工时" width="80" align="center"></el-table-column>
+            <el-table-column prop="costtime1" label="实际工时" width="80" align="center"></el-table-column>
+            <el-table-column prop="costtime1" label="调整工时" width="120" header-align="center">
               <template slot-scope="scope">
-                <el-input v-model="scope.row.modify_work_time" placeholder="修改工时" id="Value" value="scope.row.actual_work_time"
+                <el-input v-model="scope.row.costtime1" placeholder="修改工时" id="Value" value="scope.row.costtime1"
                   onkeyup="value=value.replace(/[^\d]/g,'')"></el-input>
               </template>
             </el-table-column>
-            <el-table-column prop="eval" label="评价" width="150" header-align="center" :render-header="addRedStar">
+            <el-table-column prop="commend0" label="评价" width="150" header-align="center" :render-header="addRedStar">
               <template slot-scope="scope">
-                <el-rate v-model="scope.row.eval" :colors="colors"></el-rate>
+                <el-rate v-model="scope.row.commend0" :colors="colors"></el-rate>
               </template>
             </el-table-column>
-            <el-table-column prop="remark" label="备注" width="300" header-align="center">
+            <el-table-column prop="commend1" label="备注" width="300" header-align="center">
               <template slot-scope="scope">
-                <el-input type="textarea" placeholder="请输入备注" v-model="scope.row.remark" maxlength="100"
+                <el-input type="textarea" placeholder="请输入备注" v-model="scope.row.commend1" maxlength="100"
                   show-word-limit>
                 </el-input>
               </template>
@@ -94,29 +94,7 @@ export default {
           getworktimeinfor:JSON.stringify({messionid:this.nowrow.messionid})
         }
       }).then(res=>{
-        console.log(res)
-        this.$set(this.EvaluateData[0],'name',res.data.assigner)
-        // this.EvaluateData[0].name=res.data.assigner
-        this.$set(this.EvaluateData[0],'estimate_work_time',res.data.costtime0)
-        this.$set(this.EvaluateData[0],'actual_work_time',res.data.costtime1)
-        this.$set(this.EvaluateData[0],'esti_time2',res.data.endtime0)
-        this.$set(this.EvaluateData[0],'esti_time1',res.data.starttime0)
-        this.$set(this.EvaluateData[0],'actu_time2',res.data.endtime1)
-        this.$set(this.EvaluateData[0],'actu_time1',res.data.starttime1)
-
-
-        // this.EvaluateData[0].estimate_work_time=res.data.costtime0
-        // this.EvaluateData[0].actual_work_time=res.data.costtime1
-        // this.EvaluateData[0].esti_time2=res.data.endtime0
-        // this.EvaluateData[0].esti_time1=res.data.starttime0
-        //  this.EvaluateData[0].actu_time2=res.data.endtime1
-        // this.EvaluateData[0].actu_time1=res.data.starttime1
-        this.$set(this.EvaluateData[0],'modify_work_time',res.data.costtime1)
-        this.$set(this.EvaluateData[0],'eval',res.data.commend0)
-        this.$set(this.EvaluateData[0],'remark',res.data.commend1)
-
-
-
+        this.$set(this.EvaluateData[0],res.data)
         console.log(this.EvaluateData[0])
       })
     },
@@ -128,7 +106,7 @@ export default {
       //判空
       var isempty = false;
       for (var i = 0; i < this.EvaluateData.length; i++) {
-        if (this.EvaluateData[i].eval == 0) {
+        if (this.EvaluateData[i].commend0 == 0) {
           isempty = true;
           break;
         }
@@ -150,13 +128,13 @@ export default {
         //向后端post
         var submit={}
         // this.$set(submit,'messionid',this.row.messionid)
-        // this.$set(submit,'commend0',this.EvaluateData.eval)
-        // this.$set(submit,'commend1',this.EvaluateData.remark)
-        // this.$set(submit,'costtime',this.EvaluateData.modify_work_time)
+        // this.$set(submit,'commend0',this.EvaluateData.commend0)
+        // this.$set(submit,'commend1',this.EvaluateData.commend1)
+        // this.$set(submit,'costtime',this.EvaluateData.costtime1)
         submit.messionid=this.nowrow.messionid
-        submit.commend0=this.EvaluateData[0].eval
-        submit.commend1=this.EvaluateData[0].remark
-        submit.costtime=this.EvaluateData[0].modify_work_time
+        submit.commend0=this.EvaluateData[0].commend0
+        submit.commend1=this.EvaluateData[0].commend1
+        submit.costtime=this.EvaluateData[0].costtime1
         axios({
           url:'/mession/commend',
           method:'POST',

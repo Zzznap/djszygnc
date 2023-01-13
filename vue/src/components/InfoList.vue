@@ -60,14 +60,13 @@
 </template>
 
 <script>
-import axios from 'axios'
-import Control from './buttonComponents/buttonControl.vue'
-import CancelTask from './buttonComponents/WindowCancelTask.vue'
-import Accomplish from './buttonComponents/WindowWorkingAccomplish.vue'
+import * as Control from './buttonComponents/buttonControl.vue'
+import CancelTask from './buttonComponents/CancelTask.vue'
+import Accomplish from './buttonComponents/WorkingAccomplish.vue'
 import Hours from './buttonComponents/WindowWorkingHours.vue'
-import Start from './buttonComponents/WindowWorkingStart.vue'
-import Modification from './buttonComponents/WindowTaskModification.vue'
-import WindowEvaluate from './buttonComponents/WindowEvaluate.vue'
+import Start from './buttonComponents/WorkingStart.vue'
+import Modification from './buttonComponents/TaskModification.vue'
+import WindowEvaluate from './buttonComponents/Evaluate.vue'
 import {totalPage,List} from '@/components/js/getList'
 export default {
   components: {

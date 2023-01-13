@@ -12,12 +12,12 @@
     </div>
 </template>
 <script>
-import CancelTask from './WindowCancelTask.vue'
-import Accomplish from './WindowWorkingAccomplish.vue'
+import CancelTask from './CancelTask.vue'
+import Accomplish from './WorkingAccomplish.vue'
 import Hours from './WindowWorkingHours.vue'
-import Start from './WindowWorkingStart.vue'
-import Modification from './WindowTaskModification.vue'
-import WindowEvaluate from './WindowEvaluate.vue'
+import Start from './WorkingStart.vue'
+import Modification from './TaskModification.vue'
+import WindowEvaluate from './Evaluate.vue'
 export default{
   props:['row'],
   

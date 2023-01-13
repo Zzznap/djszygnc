@@ -126,5 +126,5 @@ async function List(userid,status,proid,pagenum){
 }
 export default{
      totalPage,
-     List
+     List,
 }
